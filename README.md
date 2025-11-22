@@ -73,3 +73,31 @@ PY
 - **Один пайплайн.** Можно сократить запись и передать одиночный пайплайн и его тесты через параметры `pipeline` и `test_cases`. Внутри будет создан один `PipelineSuite`.
 
 Во всех случаях внутри UI появится выпадающий список с названиями доступных пайплайнов, так что явный выбор конкретного пайплайна на момент вызова `launch_gradio_app` не требуется.
+
+## Быстрый старт (CLI)
+
+Установите пакет в editable-режиме (`pip install -e .`) или через `uv sync`, после чего станет доступна команда `sgr-test`. Она принимает ссылку на пайплайн в формате `module:attribute` и путь к JSON с тест-кейсами:
+
+```bash
+cat > /tmp/pipeline.py <<'PY'
+class Echo:
+    name = "Echo"
+
+    def run(self, text: str) -> str:
+        return text.upper()
+
+
+pipeline = Echo()
+PY
+
+cat > /tmp/cases.json <<'JSON'
+[
+  {"id": "1", "params": {"text": "ping"}, "expected_output": "PING"},
+  {"id": "2", "params": {"text": "pong"}, "expected_output": "PONG"}
+]
+JSON
+
+uv run sgr-test --pipeline pipeline:pipeline --tests /tmp/cases.json
+```
+
+По завершении будет выведена сводка по количеству тестов и точности. Опционально можно сохранить полный отчёт в JSON через `--output path/to/report.json`.
