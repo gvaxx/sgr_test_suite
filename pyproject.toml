@@ -5,6 +5,7 @@ description = "Building blocks for LLM pipeline testing with uv."
 requires-python = ">=3.11"
 dependencies = [
     "openai>=1.40.0",
+    "gradio>=4.44.1",
 ]
 
 [build-system]
