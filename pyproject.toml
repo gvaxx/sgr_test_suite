@@ -1,0 +1,15 @@
+[project]
+name = "sgr-test-suite"
+version = "0.1.0"
+description = "Building blocks for LLM pipeline testing with uv."
+requires-python = ">=3.11"
+dependencies = [
+    "openai>=1.40.0",
+]
+
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[tool.uv]
+package = true
