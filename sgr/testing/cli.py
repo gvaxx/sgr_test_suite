@@ -7,6 +7,7 @@ import json
 import sys
 from datetime import datetime
 from pathlib import Path
+from typing import Callable
 
 from .models import TestCase, TestRun
 from .runner import Pipeline, TestRunner
@@ -59,7 +60,20 @@ def _load_test_cases(path: Path) -> list[TestCase]:
             msg = "Test case 'params' must be a mapping"
             raise ValueError(msg)
 
-        cases.append(TestCase(id=case_id, params=params, expected_output=expected))
+        comparator = item.get("comparator")
+        if comparator is not None and not isinstance(comparator, str):
+            msg = "Test case 'comparator' must be a string reference if provided"
+            raise ValueError(msg)
+
+        cases.append(
+            TestCase(
+                id=case_id,
+                params=params,
+                expected_output=expected,
+                comparator=comparator,
+                description=item.get("description"),
+            )
+        )
 
     return cases
 
