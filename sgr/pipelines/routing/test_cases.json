@@ -1,0 +1,77 @@
+[
+  {
+    "id": "routing-order-status-basic",
+    "description": "Определяет обращение о статусе доставки с валидным номером заказа.",
+    "params": {
+      "review_text": "Добрый день! Где мой заказ 1234567? Курьер не приехал в обещанный интервал.",
+      "history_text": null
+    },
+    "expected_output": {
+      "thinking": "Клиент спрашивает о задержке доставки по конкретному номеру.",
+      "categories": ["order_status"],
+      "confidence": "high",
+      "order_number": "1234567",
+      "sentiment": "negative"
+    },
+    "metadata": {
+      "topic": "logistics",
+      "locale": "ru-RU"
+    }
+  },
+  {
+    "id": "routing-incomplete-order",
+    "description": "Недовложение товара без явного указания номера заказа.",
+    "params": {
+      "review_text": "Забрала самовывоз 7654321, но в пакете нет молока и сыра. Что делать?",
+      "history_text": ""
+    },
+    "expected_output": {
+      "thinking": "Покупатель сообщает, что в заказе 7654321 не доложили товары.",
+      "categories": ["incomplete_order"],
+      "confidence": "medium",
+      "order_number": "7654321",
+      "sentiment": "negative"
+    },
+    "metadata": {
+      "topic": "fulfillment",
+      "notes": "Должны выделяться недостающие позиции"
+    }
+  },
+  {
+    "id": "routing-damaged-item",
+    "description": "Повреждение или испорченный товар после доставки.",
+    "params": {
+      "review_text": "Получил заказ вчера, одна из банок была разбита, заказ 9876543.",
+      "history_text": null
+    },
+    "expected_output": {
+      "thinking": "Товар повреждён, указан номер заказа.",
+      "categories": ["damaged_item"],
+      "confidence": "high",
+      "order_number": "9876543",
+      "sentiment": "negative"
+    },
+    "metadata": {
+      "topic": "quality"
+    }
+  },
+  {
+    "id": "routing-other-request",
+    "description": "Нестандартный запрос, не связанный с логистикой или браком.",
+    "params": {
+      "review_text": "Продлите срок хранения заказа, заберу в пятницу. Отменять не нужно.",
+      "history_text": null
+    },
+    "expected_output": {
+      "thinking": "Пользователь просит продлить хранение без жалобы на доставку или качество.",
+      "categories": ["other"],
+      "confidence": "medium",
+      "order_number": null,
+      "sentiment": "neutral"
+    },
+    "metadata": {
+      "topic": "service",
+      "intent": "extend_pickup_window"
+    }
+  }
+]

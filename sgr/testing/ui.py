@@ -2,11 +2,11 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any, Callable, Iterable
+from typing import Any, Callable, Iterable, Mapping
 
 import gradio as gr
 
-from .models import TestCase, TestResult, TestRun
+from .models import Comparator, TestCase, TestResult, TestRun
 from .runner import Pipeline, TestRunner
 
 
@@ -81,7 +81,8 @@ def build_gradio_app(
     pipeline: Pipeline | None = None,
     test_cases: Iterable[TestCase] | None = None,
     pipeline_suites: Iterable[PipelineSuite] | None = None,
-    comparator: Callable[[Any, Any], bool] | None = None,
+    comparator: Comparator | None = None,
+    comparators: Mapping[str, Comparator] | None = None,
     title: str = "Sgr Test Suite",
     description: str | None = None,
 ) -> gr.Blocks:
@@ -100,7 +101,7 @@ def build_gradio_app(
     """
 
     suites = _ensure_suites(pipeline=pipeline, test_cases=test_cases, pipeline_suites=pipeline_suites)
-    runner = TestRunner(comparator=comparator)
+    runner = TestRunner(comparator=comparator, comparators=comparators)
     suite_by_name = {suite.name: suite for suite in suites if suite.name is not None}
 
     def _format_pipeline_info(selected: list[str] | None) -> str:
@@ -173,7 +174,8 @@ def launch_gradio_app(
     pipeline: Pipeline | None = None,
     test_cases: Iterable[TestCase] | None = None,
     pipeline_suites: Iterable[PipelineSuite] | None = None,
-    comparator: Callable[[Any, Any], bool] | None = None,
+    comparator: Comparator | None = None,
+    comparators: Mapping[str, Comparator] | None = None,
     title: str = "Sgr Test Suite",
     description: str | None = None,
     **launch_kwargs: Any,
@@ -190,6 +192,7 @@ def launch_gradio_app(
         test_cases=test_cases,
         pipeline_suites=pipeline_suites,
         comparator=comparator,
+        comparators=comparators,
         title=title,
         description=description,
     )

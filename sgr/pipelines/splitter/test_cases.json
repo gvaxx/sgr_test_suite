@@ -1,0 +1,35 @@
+[
+  {
+    "id": "splitter-single-order",
+    "description": "Сообщение описывает одну ситуацию без явного номера заказа.",
+    "params": {
+      "message_text": "Сегодня заберу, не отменяйте пожалуйста заказ!"
+    },
+    "expected_output": {
+      "expected_orders_count": 1,
+      "has_request_several_orders": false
+    }
+  },
+  {
+    "id": "splitter-two-orders",
+    "description": "Сообщение явно содержит два отдельных заказа.",
+    "params": {
+      "message_text": "Где мой заказ 1234567? И еще вопрос про заказ 7654321 - там не хватает ершика"
+    },
+    "expected_output": {
+      "expected_orders_count": 2,
+      "has_request_several_orders": true
+    }
+  },
+  {
+    "id": "splitter-two-orders-compact",
+    "description": "Короткое сообщение с двумя заказами без дополнительных подробностей.",
+    "params": {
+      "message_text": "Где мои заказы 1234567 и 7654321? Оба должны были прийти вчера"
+    },
+    "expected_output": {
+      "expected_orders_count": 2,
+      "has_request_several_orders": true
+    }
+  }
+]

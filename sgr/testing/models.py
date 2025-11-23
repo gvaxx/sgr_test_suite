@@ -3,7 +3,10 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Any, List, Optional
+from typing import Any, Callable, List, Optional
+
+
+Comparator = Callable[[Any, Any], bool]
 
 
 @dataclass
@@ -13,6 +16,8 @@ class TestCase:
     id: str
     params: dict[str, Any]
     expected_output: Any
+    comparator: Comparator | str | None = None
+    description: str | None = None
 
 
 @dataclass
