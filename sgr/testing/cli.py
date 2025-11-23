@@ -22,10 +22,16 @@ def _load_pipeline(target: str) -> Pipeline:
     module_name, attr = target.split(":", maxsplit=1)
     module = importlib.import_module(module_name)
     try:
-        pipeline: Pipeline = getattr(module, attr)
+        pipeline_or_factory: Pipeline | Callable[[], Pipeline] = getattr(module, attr)
     except AttributeError as exc:  # noqa: B904
         msg = f"Attribute '{attr}' not found in module '{module_name}'"
         raise ValueError(msg) from exc
+
+    pipeline: Pipeline = pipeline_or_factory() if callable(pipeline_or_factory) else pipeline_or_factory
+
+    if not hasattr(pipeline, "run"):
+        msg = "Pipeline object must define a 'run' method"
+        raise ValueError(msg)
 
     return pipeline
 
@@ -48,6 +54,10 @@ def _load_test_cases(path: Path) -> list[TestCase]:
         except KeyError as exc:  # noqa: B904
             msg = "Each test case must contain 'id' and 'expected_output' keys"
             raise ValueError(msg) from exc
+
+        if not isinstance(params, dict):
+            msg = "Test case 'params' must be a mapping"
+            raise ValueError(msg)
 
         cases.append(TestCase(id=case_id, params=params, expected_output=expected))
 

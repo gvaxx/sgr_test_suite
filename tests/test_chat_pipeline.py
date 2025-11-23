@@ -3,7 +3,7 @@ from __future__ import annotations
 import unittest
 from typing import Any
 
-from sgr.llm import ChatPipeline, PromptTemplate
+from models.pipeline import ChatPipeline, PromptTemplate
 
 
 class DummyResponse:
