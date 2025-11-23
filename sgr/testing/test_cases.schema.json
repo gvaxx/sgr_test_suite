@@ -1,0 +1,76 @@
+{
+  "$defs": {
+    "TestCasePayload": {
+      "description": "Структура одного тест-кейса в JSON-файле.",
+      "properties": {
+        "id": {
+          "description": "Уникальный идентификатор теста",
+          "title": "Id",
+          "type": "string"
+        },
+        "params": {
+          "additionalProperties": true,
+          "description": "Аргументы, передаваемые в pipeline.run",
+          "title": "Params",
+          "type": "object"
+        },
+        "expected_output": {
+          "description": "Ожидаемый вывод пайплайна",
+          "title": "Expected Output"
+        },
+        "comparator": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Необязательное имя компаратора из реестра раннера/пайплайна. Если не задано — используется значение по умолчанию.",
+          "title": "Comparator"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Краткое описание назначения теста",
+          "title": "Description"
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Произвольные метаданные (например, тема, язык, заметки)",
+          "title": "Metadata"
+        }
+      },
+      "required": [
+        "id",
+        "expected_output"
+      ],
+      "title": "TestCasePayload",
+      "type": "object"
+    }
+  },
+  "description": "Корневой объект JSON-файла с тестами.",
+  "items": {
+    "$ref": "#/$defs/TestCasePayload"
+  },
+  "title": "TestCasesFile",
+  "type": "array"
+}

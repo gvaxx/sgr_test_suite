@@ -112,7 +112,20 @@ sgr/
 ```
 
 `test_cases.json` использует ту же схему, что и CLI (`id`, `params`,
-`expected_output`, опционально `description` и `comparator`).
+`expected_output`, опционально `description` и `comparator`). Формальная
+JSON Schema опубликована в `sgr/testing/test_cases.schema.json`; для
+программной валидации можно использовать функцию `load_test_cases(path)` из
+`sgr.testing`, которая вернёт список `TestCase` или выбросит `ValueError` при
+несоответствии.
+
+Ключевые поля `test_cases.json`:
+
+- `id` — уникальный идентификатор теста.
+- `params` — словарь с аргументами, передаваемыми в `pipeline.run`.
+- `expected_output` — ожидаемый ответ пайплайна.
+- `comparator` — имя компаратора из реестров раннера/пайплайна (опционально).
+- `description` — краткое описание (опционально).
+- `metadata` — произвольные метаданные, например `topic`, `locale`, заметки.
 
 ### Кастомные компараторы
 

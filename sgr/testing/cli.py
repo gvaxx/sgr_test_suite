@@ -3,13 +3,14 @@ from __future__ import annotations
 
 import argparse
 import importlib
-import json
 import sys
+import json
 from datetime import datetime
 from pathlib import Path
 from typing import Callable
 
-from .models import TestCase, TestRun
+from .models import TestRun
+from .schema import load_test_cases
 from .runner import Pipeline, TestRunner
 
 
@@ -35,48 +36,6 @@ def _load_pipeline(target: str) -> Pipeline:
         raise ValueError(msg)
 
     return pipeline
-
-
-def _load_test_cases(path: Path) -> list[TestCase]:
-    raw = json.loads(path.read_text())
-    if not isinstance(raw, list):
-        msg = "Test cases JSON should be a list of objects"
-        raise ValueError(msg)
-
-    cases: list[TestCase] = []
-    for item in raw:
-        if not isinstance(item, dict):
-            msg = "Each test case should be an object"
-            raise ValueError(msg)
-        try:
-            case_id = item["id"]
-            params = item.get("params", {})
-            expected = item["expected_output"]
-        except KeyError as exc:  # noqa: B904
-            msg = "Each test case must contain 'id' and 'expected_output' keys"
-            raise ValueError(msg) from exc
-
-        if not isinstance(params, dict):
-            msg = "Test case 'params' must be a mapping"
-            raise ValueError(msg)
-
-        comparator = item.get("comparator")
-        if comparator is not None and not isinstance(comparator, str):
-            msg = "Test case 'comparator' must be a string reference if provided"
-            raise ValueError(msg)
-
-        cases.append(
-            TestCase(
-                id=case_id,
-                params=params,
-                expected_output=expected,
-                comparator=comparator,
-                description=item.get("description"),
-            )
-        )
-
-    return cases
-
 
 def _parse_args(argv: list[str]) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Run pipeline test cases from CLI")
@@ -106,7 +65,7 @@ def main(argv: list[str] | None = None) -> int:
     args = _parse_args(argv or sys.argv[1:])
 
     pipeline = _load_pipeline(args.pipeline)
-    test_cases = _load_test_cases(args.tests)
+    test_cases = load_test_cases(args.tests)
 
     runner = TestRunner()
     test_run = runner.run(pipeline=pipeline, test_cases=test_cases)
