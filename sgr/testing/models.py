@@ -60,6 +60,35 @@ class TestRun:
     ended_at: datetime
     results: List[TestResult] = field(default_factory=list)
 
+    def to_dict(self) -> dict[str, Any]:
+        """Convert run details to a JSON-serializable structure."""
+
+        return {
+            "pipeline_name": self.pipeline_name,
+            "started_at": self.started_at.isoformat(),
+            "ended_at": self.ended_at.isoformat(),
+            "duration_seconds": self.duration_seconds,
+            "summary": {
+                "total": self.summary.total,
+                "passed": self.summary.passed,
+                "failed": self.summary.failed,
+                "accuracy": self.summary.accuracy,
+            },
+            "results": [
+                {
+                    "id": result.id,
+                    "passed": result.passed,
+                    "output": result.output,
+                    "expected_output": result.expected_output,
+                    "started_at": result.started_at.isoformat(),
+                    "ended_at": result.ended_at.isoformat(),
+                    "duration_seconds": result.duration_seconds,
+                    "error": result.error,
+                }
+                for result in self.results
+            ],
+        }
+
     @property
     def summary(self) -> RunSummary:
         """Summarize run outcome."""
