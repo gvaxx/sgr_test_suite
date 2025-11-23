@@ -18,6 +18,7 @@ class TestCase:
     expected_output: Any
     comparator: Comparator | str | None = None
     description: str | None = None
+    metadata: dict[str, Any] | None = None
 
 
 @dataclass
