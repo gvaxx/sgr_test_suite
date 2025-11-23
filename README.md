@@ -69,10 +69,11 @@ PY
 
 ## Базовый LLM-пайплайн
 
-В модуле `sgr.llm` есть утилиты для работы с OpenAI-совместимыми моделями. Самый простой вариант — использовать `ChatPipeline`, который принимает клиента `OpenAIClient` и пару промптов (системный необязателен). Плейсхолдеры в пользовательском промпте подставляются из аргументов `run`:
+В модуле `models.pipeline` есть утилиты для работы с OpenAI-совместимыми моделями. Самый простой вариант — использовать `ChatPipeline`, который принимает клиента `OpenAIClient` и пару промптов (системный необязателен). Плейсхолдеры в пользовательском промпте подставляются из аргументов `run`:
 
 ```python
-from sgr.llm import ChatPipeline, LLMClientConfig, OpenAIClient, PromptTemplate
+from models.pipeline import ChatPipeline, PromptTemplate
+from sgr.llm import LLMClientConfig, OpenAIClient
 
 client = OpenAIClient(LLMClientConfig(api_key="sk-..."))
 pipeline = ChatPipeline(

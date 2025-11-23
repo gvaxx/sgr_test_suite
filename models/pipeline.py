@@ -2,9 +2,12 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from json import JSONDecodeError, loads
 from typing import Any, Callable, Iterable, Mapping
 
-from .client import OpenAIClient
+from pydantic import BaseModel, ValidationError
+
+from sgr.llm.client import OpenAIClient
 
 ChatMessages = Iterable[dict[str, str]]
 
@@ -59,4 +62,30 @@ class ChatPipeline:
         return parser(response)
 
 
-__all__ = ["ChatPipeline", "PromptTemplate"]
+@dataclass(slots=True)
+class StructuredChatPipeline(ChatPipeline):
+    """Pipeline that parses model output into a Pydantic schema."""
+
+    response_model: type[BaseModel] | None = None
+
+    def __post_init__(self) -> None:
+        if self.response_model is None:  # pragma: no cover - defensive guard
+            msg = "StructuredChatPipeline requires a response_model"
+            raise ValueError(msg)
+
+    def run(self, **params: Any) -> BaseModel:
+        raw = ChatPipeline.run(self, **params)
+        try:
+            payload = loads(raw)
+        except JSONDecodeError as exc:  # noqa: B904
+            msg = "Model response is not valid JSON"
+            raise ValueError(msg) from exc
+
+        try:
+            return self.response_model.model_validate(payload)  # type: ignore[union-attr]
+        except ValidationError as exc:  # noqa: B904
+            msg = "Model response does not match the expected schema"
+            raise ValueError(msg) from exc
+
+
+__all__ = ["ChatPipeline", "PromptTemplate", "StructuredChatPipeline"]
